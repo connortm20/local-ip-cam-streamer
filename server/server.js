@@ -1,13 +1,16 @@
+const fs =require('fs');
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const options = { key: fs.readFileSync('./privatekey.pem'),
+		  cert: fs.readFileSync('./certificate.pem')};
 const socketIo = require('socket.io');
 const ffmpeg = require('fluent-ffmpeg');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
+const server = https.createServer(options, app);
+const io = require("socket.io")(server, {
   cors: {
-    origin: "*", 
+    origin: "https://192.168.1.126", 
     methods: ["GET", "POST"]
   }
 });
