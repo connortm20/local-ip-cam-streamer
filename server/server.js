@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*", // Allow any origin for CORS during development
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -16,15 +16,17 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   
   const ffmpegCommand = ffmpeg()
-    .input('pipe:0') // stdin
+    .input('pipe:0')
     .inputFormat('image2pipe')
     .videoCodec('libx264')
+    .size('640x480')
     .outputOptions([
       '-pix_fmt yuv420p',
       '-preset ultrafast',
       '-f segment',
-      '-segment_time 300', // Use a lower number for testing, e.g., 10
-      '-reset_timestamps 1'
+      '-segment_time 10',
+      '-reset_timestamps 1',
+      '-r 30'
     ])
     .output('tempVids/output-%03d.mp4')
     .on('start', (commandLine) => {
@@ -54,7 +56,7 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     if (ffmpegCommand.ffmpegProc) {
       ffmpegCommand.ffmpegProc.stdin.end();
-      ffmpegCommand.kill('SIGINT');
+      //ffmpegCommand.kill('SIGINT');
     }
   });
 });

@@ -6,14 +6,29 @@ const WebcamStreamCapture = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    let video;
     (async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 30 }
+          }
+        });
+
+        //checking what framerate camera is emitting
+        const videoTrack = stream.getVideoTracks()[0];
+        const trackSettings = videoTrack.getSettings();
+        const frameRate = trackSettings.frameRate;
+        const frameInterval = 1000 / frameRate;
+        
         videoRef.current.srcObject = stream;
 
-        socketRef.current = io('http://localhost:5000');
-        
-        const video = videoRef.current;
+        socketRef.current = io('http://localhost:5000',{ autoConnect: false });
+        socketRef.current.open();
+
+        video = videoRef.current;
         video.addEventListener('loadedmetadata', () => {
           video.play();
           const canvas = document.createElement('canvas');
@@ -23,7 +38,7 @@ const WebcamStreamCapture = () => {
           setInterval(() => {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             socketRef.current.emit('stream', canvas.toDataURL('image/webp'));
-          }, 100); // Emit every 100ms
+          }, frameInterval);
         });
       } catch (err) {
         console.error("Error accessing webcam", err);
@@ -34,9 +49,10 @@ const WebcamStreamCapture = () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
-      const mediaStream = videoRef.current?.srcObject;
+      const mediaStream = video?.srcObject;
       const tracks = mediaStream?.getTracks() || [];
       tracks.forEach(track => track.stop());
+    
     };
   }, []);
 
