@@ -13,11 +13,12 @@ const WebcamStreamCapture = () => {
           video: {
             width: { ideal: 640 },
             height: { ideal: 480 },
-            frameRate: { ideal: 30 }
+            frameRate: { ideal: 30 },
+            facingMode: {exact: "environment"}
           }
         });
 
-        //checking what framerate camera is emitting
+        //getting current framerate and converting to frametime
         const videoTrack = stream.getVideoTracks()[0];
         const trackSettings = videoTrack.getSettings();
         const frameRate = trackSettings.frameRate;
@@ -35,11 +36,24 @@ const WebcamStreamCapture = () => {
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           const context = canvas.getContext('2d');
+
           setInterval(() => {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+             // If the video is in portrait mode, crop it
+            if (video.videoHeight > video.videoWidth) {
+              const scale = canvas.width / video.videoWidth;
+              const scaledHeight = video.videoHeight * scale;
+              const startY = (scaledHeight - canvas.height) / 2;
+              
+              // Draw the cropped video frame to the canvas
+              context.drawImage(video, 0, -startY, canvas.width, scaledHeight);
+            } else {
+              //landscape camera uses full frame
+              context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
             socketRef.current.emit('stream', canvas.toDataURL('image/webp'));
           }, frameInterval);
         });
+
       } catch (err) {
         console.error("Error accessing webcam", err);
       }

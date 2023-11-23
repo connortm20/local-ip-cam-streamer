@@ -10,14 +10,18 @@ const app = express();
 const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://192.168.1.126", 
+    origin: "https://192.168.1.126,*", 
     methods: ["GET", "POST"]
   }
 });
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+
+  //generate unique connection id
+  const clientId = socket.id;
   
+  //calls ffmpeg encoding from piped stdin img
   const ffmpegCommand = ffmpeg()
     .input('pipe:0')
     .inputFormat('image2pipe')
@@ -27,11 +31,11 @@ io.on('connection', (socket) => {
       '-pix_fmt yuv420p',
       '-preset ultrafast',
       '-f segment',
-      '-segment_time 10',
+      '-segment_time 30',
       '-reset_timestamps 1',
       '-r 30'
     ])
-    .output('tempVids/output-%03d.mp4')
+    .output(`tempVids/output-${clientId}-%03d.mp4`)
     .on('start', (commandLine) => {
       console.log('Spawned ffmpeg with command:', commandLine);
     })
@@ -59,7 +63,6 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     if (ffmpegCommand.ffmpegProc) {
       ffmpegCommand.ffmpegProc.stdin.end();
-      //ffmpegCommand.kill('SIGINT');
     }
   });
 });
