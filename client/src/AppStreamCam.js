@@ -26,7 +26,7 @@ const WebcamStreamCapture = () => {
         
         videoRef.current.srcObject = stream;
 
-        socketRef.current = io('https://192.168.1.126:5000',{ autoConnect: false });
+        socketRef.current = io('https://10.13.134.57:5000',{ autoConnect: false });
         socketRef.current.open();
 
         video = videoRef.current;
