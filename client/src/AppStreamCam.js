@@ -14,7 +14,7 @@ const WebcamStreamCapture = () => {
             width: { ideal: 640 },
             height: { ideal: 480 },
             frameRate: { ideal: 30 },
-            facingMode: {exact: "environment"}
+            facingMode: {ideal: "environment"}
           }
         });
 
