@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@expo/webpack-config": "^19.0.0",
+    "expo": "^49.0.21",
+    "expo-camera": "~13.4.4",
+    "expo-file-system": "~15.4.5",
+    "expo-modules-core": "~1.5.12",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "18.2.0",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.7.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-native": "0.72.6",
+    "react-native-web": "~0.19.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,5 +39,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "babel-preset-react-native": "^4.0.1"
   }
 }

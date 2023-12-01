@@ -38,9 +38,11 @@ const WebcamStreamCapture = () => {
           const context = canvas.getContext('2d');
 
           setInterval(() => {
+
+
              // If the video is in portrait mode, crop it
             if (video.videoHeight > video.videoWidth) {
-              const scale = canvas.width / video.videoWidth;
+              const scale = 3/2;//480p scale
               const scaledHeight = video.videoHeight * scale;
               const startY = (scaledHeight - canvas.height) / 2;
               
