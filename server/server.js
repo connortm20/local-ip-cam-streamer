@@ -62,8 +62,6 @@ function uploadAndDeleteAllVideos() {
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  //add socket to video map
-  videoSegmentsMap.set(socket.id, []);
 
   //generate unique connection id
   const clientId = socket.id;
