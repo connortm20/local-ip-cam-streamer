@@ -29,6 +29,14 @@ const WebcamStreamCapture = () => {
         socketRef.current = io('https://192.168.4.1:5000',{ autoConnect: false });
         socketRef.current.open();
 
+        socketRef.current.on('connect', () => {
+          console.log('Connected to the server');
+        });
+      
+        socketRef.current.on('disconnect', (reason) => {
+          console.log(`Disconnected: ${reason}`);
+        });
+
         video = videoRef.current;
         video.addEventListener('loadedmetadata', () => {
           video.play();
