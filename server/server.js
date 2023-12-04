@@ -88,6 +88,10 @@ function uploadAndDeleteAllVideos() {
     });
   });
 }
+//run the uploader every 2 minutes
+const uploadInterval = setInterval(() => {
+  uploadAndDeleteAllVideos();
+}, 120000);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -114,13 +118,6 @@ io.on('connection', (socket) => {
     .on('start', (commandLine) => {
       console.log('Spawned ffmpeg with command:', commandLine);
     })
-    .on('end', () => {
-      uploadAndDeleteAllVideos();
-    })
-    .on('segment', (filename) => {
-      console.log(`Segment ${filename} completed`);
-      uploadAndDeleteAllVideos();
-    })
     .on('error', (error, stdout, stderr) => {
       console.error('Error:', error.message);
       console.error('ffmpeg stderr:', stderr);
@@ -146,7 +143,6 @@ io.on('connection', (socket) => {
     if (ffmpegCommand.ffmpegProc) {
       ffmpegCommand.ffmpegProc.stdin.end();
     }
-    uploadAndDeleteAllVideos();
   });
 });
 
