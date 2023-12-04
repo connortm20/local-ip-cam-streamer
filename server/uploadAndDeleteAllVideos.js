@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const uploadToOneDrive = require('./uploadToOneDrive'); // Ensure the path to your 'uploadToOneDrive' module is correct
 
-const UPLOAD_THRESHOLD = 120; // Time in seconds
+const UPLOAD_THRESHOLD = 30; // Time in seconds
 const tempVidDir = 'tempVids'; // Directory where the video segments are stored
 
 function uploadAndDeleteAllVideos() {
