@@ -51,11 +51,36 @@ function uploadAndDeleteAllVideos() {
     const videoFiles = files.filter(file => file.endsWith('.mp4'));
 
     videoFiles.forEach((filename) => {
-      const fullPath = path.join(tempVidDir, filename); // This will create a path like 'tempVids/filename.mp4'
-      uploadToOneDrive(fullPath, yourAccessToken).then(() => {
-        console.log(`Uploaded and deleted video: ${filename}`);
-      }).catch(error => {
-        console.error(`Failed to upload/delete video: ${filename}`, error);
+      const fullPath = path.join(tempVidDir, filename);
+      fs.stat(fullPath, (statErr, stats) => {
+        if (statErr) {
+          return console.error(`Failed to retrieve stats for file: ${filename}`, statErr);
+        }
+        // Only upload files larger than 48 bytes
+        if (stats.size > 48) {
+          uploadToOneDrive(fullPath, yourAccessToken)
+            .then(() => {
+              console.log(`Uploaded and deleted video: ${filename}`);
+            })
+            .catch(uploadErr => {
+              if (uploadErr.response && uploadErr.response.statusCode === 409) {
+                // Handle the conflict
+                console.error(`Conflict when uploading ${filename}: a file with the same name already exists.`);
+              } else {
+                // Handle other types of errors
+                console.error(`Failed to upload/delete video: ${filename}`, uploadErr);
+              }
+            });
+        } else {
+          // If the file is 48 bytes or smaller, delete it
+          fs.unlink(fullPath, deleteErr => {
+            if (deleteErr) {
+              console.error(`Failed to delete small video file: ${filename}`, deleteErr);
+            } else {
+              console.log(`Deleted small video file: ${filename}`);
+            }
+          });
+        }
       });
     });
   });
@@ -87,6 +112,10 @@ io.on('connection', (socket) => {
       console.log('Spawned ffmpeg with command:', commandLine);
     })
     .on('end', () => {
+      uploadAndDeleteAllVideos();
+    })
+    .on('segment', (filename) => {
+      console.log(`Segment ${filename} completed`);
       uploadAndDeleteAllVideos();
     })
     .on('error', (error, stdout, stderr) => {
