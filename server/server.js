@@ -112,7 +112,7 @@ io.on('connection', (socket) => {
       '-f segment',
       '-segment_time 10',
       '-reset_timestamps 1',
-      '-r 15'
+      '-r 30'
     ])
     .output(`tempVids/output-%03d-${clientId}.mp4`)
     .on('start', (commandLine) => {
