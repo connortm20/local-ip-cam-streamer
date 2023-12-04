@@ -38,25 +38,25 @@ app.get('/oauth-callback', (req, res) => {
   }
 });
 
-const videoSegmentsMap = new Map();
 
-function uploadAndDeleteVideoSegments(clientId) {
-  const segments = videoSegmentsMap.get(clientId) || [];
-  
-  if (segments.length) {
-    // Iterate over the segments array and upload/delete each one
-    segments.forEach((filename) => {
-      uploadToOneDrive(filename, yourAccessToken).then(() => {
-        // Here, the file upload is successful, and the file has already been deleted
-        // after the upload within your uploadToOneDrive function.
-        console.log(`Uploaded and deleted segment: ${filename}`);
-      }).catch((error) => {
-        console.error(`Failed to upload/delete segment: ${filename}`, error);
+function uploadAndDeleteAllVideos() {
+  const tempVidDir = 'tempVids';
+  fs.readdir(tempVidDir, (err, files) => {
+    if (err) {
+      return console.error('Failed to read directory:', err);
+    }
+    // Filter for video files if needed
+    const videoFiles = files.filter(file => file.endsWith('.mp4'));
+
+    videoFiles.forEach((filename) => {
+      const fullPath = path.join(tempVidDir, filename);
+      uploadToOneDrive(fullPath, yourAccessToken).then(() => {
+        console.log(`Uploaded and deleted video: ${filename}`);
+      }).catch(error => {
+        console.error(`Failed to upload/delete video: ${filename}`, error);
       });
     });
-  } else {
-    console.log(`No segments to upload/delete for client: ${clientId}`);
-  }
+  });
 }
 
 io.on('connection', (socket) => {
@@ -114,10 +114,7 @@ io.on('connection', (socket) => {
     if (ffmpegCommand.ffmpegProc) {
       ffmpegCommand.ffmpegProc.stdin.end();
     }
-    uploadAndDeleteVideoSegments(socket.id, () => {
-      // Remove the client's video segments from the map after all uploads and deletions
-      videoSegmentsMap.delete(socket.id);
-    });
+    uploadAndDeleteAllVideos();
   });
 });
 
