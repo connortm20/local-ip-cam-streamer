@@ -25,7 +25,9 @@ const io = require("socket.io")(server, {
   pingTimeout: 5000
 });
 
-
+process.on('unhandledRejection', error => {
+  console.error('Unhandled promise rejection:', error);
+});
 
 
 app.get('/oauth-callback', (req, res) => {
@@ -63,11 +65,12 @@ function uploadAndDeleteAllVideos() {
               console.log(`Uploaded and deleted video: ${filename}`);
             })
             .catch(uploadErr => {
+              // If there is a 409 Conflict, handle it accordingly
               if (uploadErr.response && uploadErr.response.statusCode === 409) {
-                // Handle the conflict
                 console.error(`Conflict when uploading ${filename}: a file with the same name already exists.`);
+                // Decide what to do in the case of a conflict, such as renaming the file and retrying
               } else {
-                // Handle other types of errors
+                // Handle other types of errors gracefully without crashing the server
                 console.error(`Failed to upload/delete video: ${filename}`, uploadErr);
               }
             });
