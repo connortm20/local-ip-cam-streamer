@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
       console.log('Spawned ffmpeg with command:', commandLine);
     })
     .on('end', () => {
-      uploadAndDeleteVideoSegments(socket.id);
+      uploadAndDeleteAllVideos();
     })
     .on('error', (error, stdout, stderr) => {
       console.error('Error:', error.message);
