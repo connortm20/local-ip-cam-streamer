@@ -1,10 +1,10 @@
 const fs =require('fs');
 const express = require('express');
 const https = require('https');
-//const options = { key: fs.readFileSync('/etc/ssl/localhost+2-key.pem'),
-//		  cert: fs.readFileSync('/etc/ssl/localhost+2.pem')};
-const options = { key: fs.readFileSync('server.key'),
-		  cert: fs.readFileSync('server.crt')};
+const options = { key: fs.readFileSync('/etc/ssl/localhost+2-key.pem'),
+		  cert: fs.readFileSync('/etc/ssl/localhost+2.pem')};
+//const options = { key: fs.readFileSync('server.key'),
+//		  cert: fs.readFileSync('server.crt')};
 
 const socketIo = require('socket.io');
 const ffmpeg = require('fluent-ffmpeg');
