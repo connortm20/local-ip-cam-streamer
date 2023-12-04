@@ -13,7 +13,6 @@ const yourAccessToken = "EwB4A8l6BAAUAOyDv0l6PcCVu89kmzvqZmkWABkAAbglooOdT7IUvl6
 
 const ffmpeg = require('fluent-ffmpeg');
 
-const uploadToOneDrive = require('./uploadToOneDrive');
 
 const app = express();
 const server = https.createServer(options, app);
@@ -43,51 +42,7 @@ app.get('/oauth-callback', (req, res) => {
 });
 
 
-function uploadAndDeleteAllVideos() {
-  const tempVidDir = 'tempVids';
-  fs.readdir(tempVidDir, (err, files) => {
-    if (err) {
-      return console.error('Failed to read directory:', err);
-    }
-    // Filter for video files if needed
-    const videoFiles = files.filter(file => file.endsWith('.mp4'));
-
-    videoFiles.forEach((filename) => {
-      const fullPath = path.join(tempVidDir, filename);
-      fs.stat(fullPath, (statErr, stats) => {
-        if (statErr) {
-          return console.error(`Failed to retrieve stats for file: ${filename}`, statErr);
-        }
-        // Only upload files larger than 48 bytes
-        if (stats.size > 48) {
-          uploadToOneDrive(fullPath, yourAccessToken)
-            .then(() => {
-              console.log(`Uploaded and deleted video: ${filename}`);
-            })
-            .catch(uploadErr => {
-              // If there is a 409 Conflict, handle it accordingly
-              if (uploadErr.response && uploadErr.response.statusCode === 409) {
-                console.error(`Conflict when uploading ${filename}: a file with the same name already exists.`);
-                // Decide what to do in the case of a conflict, such as renaming the file and retrying
-              } else {
-                // Handle other types of errors gracefully without crashing the server
-                console.error(`Failed to upload/delete video: ${filename}`, uploadErr);
-              }
-            });
-        } else {
-          // If the file is 48 bytes or smaller, delete it
-          fs.unlink(fullPath, deleteErr => {
-            if (deleteErr) {
-              console.error(`Failed to delete small video file: ${filename}`, deleteErr);
-            } else {
-              console.log(`Deleted small video file: ${filename}`);
-            }
-          });
-        }
-      });
-    });
-  });
-}
+const uploadAndDeleteAllVideos = require("./uploadAndDeleteAllVideos.js");
 //run the uploader every 2 minutes
 const uploadInterval = setInterval(() => {
   uploadAndDeleteAllVideos();
