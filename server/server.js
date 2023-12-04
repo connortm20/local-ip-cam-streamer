@@ -10,7 +10,7 @@ const app = express();
 const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://192.168.4.1", 
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -68,6 +68,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(PORT,'0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
