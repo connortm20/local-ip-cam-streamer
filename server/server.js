@@ -2,10 +2,10 @@ const fs =require('fs');
 const path = require('path');
 const express = require('express');
 const https = require('https');
-//const options = { key: fs.readFileSync('/etc/ssl/localhost+2-key.pem'),
-//		  cert: fs.readFileSync('/etc/ssl/localhost+2.pem')};
-const options = { key: fs.readFileSync('server.key'),
-		  cert: fs.readFileSync('server.crt')};
+const options = { key: fs.readFileSync('/etc/ssl/localhost+2-key.pem'),
+		  cert: fs.readFileSync('/etc/ssl/localhost+2.pem')};
+//const options = { key: fs.readFileSync('server.key'),
+//		  cert: fs.readFileSync('server.crt')};
 
 //manual request for new access
 //https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=85065df1-1a3c-466e-a0f9-0ef87e3badda&scope=files.readwrite&response_type=token&redirect_uri=https://localhost:5000/oauth-callback
