@@ -3,7 +3,7 @@ const fs = require('fs');
 
 function uploadToOneDrive(filename, accessToken) {
   return new Promise((resolve, reject) => {
-    const fullPath = `tempVids/${filename}`;
+    const fullPath = `${filename}`;
     fs.stat(fullPath, (err, stats) => {
       if (err) {
         console.error(`Failed to retrieve file stats for ${filename}: ${err}`);
