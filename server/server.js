@@ -12,7 +12,7 @@ const app = express();
 const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://10.13.134.57", 
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -89,6 +89,7 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const listener = server.listen(PORT,'0.0.0.0', () => {
+	const address = listener.address();  
+	console.log(`Server running on ${address.address}:${address.port}`);
 });
