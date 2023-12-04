@@ -16,7 +16,8 @@ const io = require("socket.io")(server, {
   cors: {
     origin: "*", 
     methods: ["GET", "POST"]
-  }
+  },
+  pingTimeout: 25000
 });
 
 const uploadToOneDrive = require('./uploadToOneDrive');
