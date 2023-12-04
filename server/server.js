@@ -49,7 +49,7 @@ function uploadAndDeleteAllVideos() {
     const videoFiles = files.filter(file => file.endsWith('.mp4'));
 
     videoFiles.forEach((filename) => {
-      const fullPath = path.join(tempVidDir, filename);
+      const fullPath = path.join(tempVidDir, filename); // This will create a path like 'tempVids/filename.mp4'
       uploadToOneDrive(fullPath, yourAccessToken).then(() => {
         console.log(`Uploaded and deleted video: ${filename}`);
       }).catch(error => {
@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
       '-f segment',
       '-segment_time 10',
       '-reset_timestamps 1',
-      '-r 30'
+      '-r 15'
     ])
     .output(`tempVids/output-%03d-${clientId}.mp4`)
     .on('start', (commandLine) => {
