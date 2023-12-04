@@ -20,7 +20,7 @@ const io = require("socket.io")(server, {
     origin: "*", 
     methods: ["GET", "POST"]
   },
-  pingTimeout: 25000
+  pingTimeout: 5000
 });
 
 

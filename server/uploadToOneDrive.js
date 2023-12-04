@@ -34,3 +34,5 @@ function uploadToOneDrive(filename, accessToken) {
     });
   });
 }
+
+module.exports = uploadToOneDrive;
